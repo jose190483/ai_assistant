@@ -39,7 +39,7 @@
         <!-- Left Column (30%) -->
         <div class="col-md-4">
             <div class="card shadow-sm mb-3">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-info text-white">
                     <h5 class="mb-0">Search Keywords</h5>
                 </div>
                 <div class="card-body">
@@ -50,7 +50,9 @@
                             <textarea class="form-control" name="keywords" id="keywords" rows="6"
                                       placeholder="e.g., turbine, shaft, bearing"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Search PDFs</button>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="submit" class="btn btn-success">🔍 Search PDFs</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -93,22 +95,39 @@
                     </table>
                     {% endif %}
                     {% if found_summary %}
-    <div class="mt-4">
-        <h5>🔍 Matched Page Text:</h5>
-        {% for kw, matches in found_summary.items %}
-            {% for pdf_name, page_num, highlighted_text in matches %}
-                <div class="card mb-3">
-                    <div class="card-header bg-secondary text-white">
-                        <strong>{{ kw }}</strong> found in <strong>{{ pdf_name }}</strong> — Page {{ page_num }}
+                    {% if stats %}
+                    {% if found_summary %}
+                    <div class="mt-3">
+                        <a href="{% url 'export_csv' %}" class="btn btn-primary">📥 Download CSV</a>
                     </div>
-                    <div class="card-body" style="white-space: pre-wrap; background-color: #f8f9fa;">
-                        {{ highlighted_text|safe }}
+                    {% endif %}
+                    <div class="mt-3">
+                        <h5>📊 Summary:</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">📁 PDFs Scanned: <strong>{{ stats.pdfs_scanned }}</strong></li>
+                            <li class="list-group-item">📝 Keywords Entered: <strong>{{ stats.keywords_entered }}</strong></li>
+                            <li class="list-group-item">✅ Keywords Matched: <strong>{{ stats.keywords_matched }}</strong></li>
+                            <li class="list-group-item">❌ Keywords Not Found: <strong>{{ stats.keywords_not_found }}</strong></li>
+                        </ul>
                     </div>
-                </div>
-            {% endfor %}
-        {% endfor %}
-    </div>
-{% endif %}
+                    {% endif %}
+
+                    <div class="mt-4">
+                        <h5>🔍 Matched Page Text:</h5>
+                        {% for kw, matches in found_summary.items %}
+                        {% for pdf_name, page_num, highlighted_text in matches %}
+                        <div class="card mb-3">
+                            <div class="card-header bg-secondary text-white">
+                                <strong>{{ kw }}</strong> found in <strong>{{ pdf_name }}</strong> — Page {{ page_num }}
+                            </div>
+                            <div class="card-body" style="white-space: pre-wrap; background-color: #f8f9fa;">
+                                {{ highlighted_text|safe }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
 
                     {% if not_found_keywords %}
                     <h6 class="mt-4">Keywords Not Found:</h6>

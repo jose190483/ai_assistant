@@ -10,6 +10,7 @@ def search_keywords(request):
     highlighted_results = defaultdict(list)
     not_found_keywords = []
     message = ''
+    keywords = []
 
     if request.method == 'POST':
         # ✅ Handle clear PDFs
@@ -59,10 +60,23 @@ def search_keywords(request):
                             )
 
             not_found_keywords = [kw for kw in keywords if not highlighted_results[kw]]
-
+    num_pdfs = len([f for f in os.listdir(PDF_FOLDER) if f.endswith('.pdf')])
+    num_keywords = len(keywords)
+    num_matched = len([kw for kw in highlighted_results if highlighted_results[kw]])
+    num_not_found = len(not_found_keywords)
+    request.session['keywords'] = keywords
+    request.session['found_summary'] = dict(highlighted_results)
     return render(request, 'idp_app/search_page.html', {
+        'stats': {
+            'pdfs_scanned': num_pdfs,
+            'keywords_entered': num_keywords,
+            'keywords_matched': num_matched,
+            'keywords_not_found': num_not_found,
+        },
         'found_summary': dict(highlighted_results),
         'not_found_keywords': not_found_keywords,
         'message': message,
         'pdf_files': [f for f in os.listdir(PDF_FOLDER) if f.endswith('.pdf')]
     })
+
+
