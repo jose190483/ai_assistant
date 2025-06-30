@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Search Results</h2>
+
+<h3>Keywords Found:</h3>
+<table border="1">
+    <tr><th>Keyword</th><th>PDF File</th><th>Page Numbers</th></tr>
+    {% for keyword, matches in found_summary.items %}
+        <tr>
+            <td>{{ keyword }}</td>
+            <td>
+                {% for match in matches %}
+                    {{ match.0 }}<br>
+                {% endfor %}
+            </td>
+            <td>
+                {% for match in matches %}
+                    Page {{ match.1 }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h3>Keywords Not Found:</h3>
+<ul>
+    {% for keyword in not_found_keywords %}
+        <li>{{ keyword }}</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

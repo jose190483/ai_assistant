@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Keyword Search</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Search Technical Keywords in PDFs</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="keywords" class="form-label">Enter technical keywords (comma-separated):</label>
+                    <textarea class="form-control" name="keywords" id="keywords" rows="5" placeholder="e.g., compressor, turbine, nozzle"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Search PDFs</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS (Optional for some components) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

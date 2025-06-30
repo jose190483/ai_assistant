@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Keyword Search</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <div class="row w-100 align-items-center">
+            <!-- Left Spacer -->
+            <div class="col-3 text-start"></div>
+
+            <!-- Center Logo + Title -->
+            <div class="col-6 text-center">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" width="50" height="50" class="me-3">
+                    <h1 class="mb-0 display-5 text-white">Intelligent Keyword Search</h1>
+                </div>
+            </div>
+
+            <!-- Right Link -->
+            <div class="col-3 text-end">
+                <a href="{% url 'manage_pdfs' %}" class="btn btn-outline-light btn-sm">📁 Manage PDFs</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container-fluid mt-4">
+    {% if message %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endif %}
+    <div class="row">
+        <!-- Left Column (30%) -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Search Keywords</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="keywords" class="form-label">Enter keywords (comma-separated):</label>
+                            <textarea class="form-control" name="keywords" id="keywords" rows="6"
+                                      placeholder="e.g., turbine, shaft, bearing"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Search PDFs</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column (70%) -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Search Results</h5>
+                </div>
+                <div class="card-body">
+                    {% if found_summary %}
+                    <h6>Keywords Found:</h6>
+                    <table class="table table-bordered table-hover table-sm">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Keyword</th>
+                            <th>PDF File</th>
+                            <th>Page Numbers</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for keyword, matches in found_summary.items %}
+                        <tr>
+                            <td>{{ keyword }}</td>
+                            <td>
+                                {% for match in matches %}
+                                {{ match.0 }}<br>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for match in matches %}
+                                Page {{ match.1 }}<br>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                    {% if found_summary %}
+    <div class="mt-4">
+        <h5>🔍 Matched Page Text:</h5>
+        {% for kw, matches in found_summary.items %}
+            {% for pdf_name, page_num, highlighted_text in matches %}
+                <div class="card mb-3">
+                    <div class="card-header bg-secondary text-white">
+                        <strong>{{ kw }}</strong> found in <strong>{{ pdf_name }}</strong> — Page {{ page_num }}
+                    </div>
+                    <div class="card-body" style="white-space: pre-wrap; background-color: #f8f9fa;">
+                        {{ highlighted_text|safe }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+                    {% if not_found_keywords %}
+                    <h6 class="mt-4">Keywords Not Found:</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for keyword in not_found_keywords %}
+                        <li class="list-group-item text-danger">{{ keyword }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    {% if not found_summary and not not_found_keywords %}
+                    <p class="text-muted">No results yet. Enter keywords and click "Search PDFs".</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
